@@ -1,118 +1,74 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import uuid from 'uuid-random';
+import React, { useState } from 'react';
+import { View, StyleSheet, FlatList, Alert } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Header from './components/Header'
+import ListItem from './components/ListItem'
+import AddItem from './components/AddItem'
 
-declare const global: {HermesInternal: null | {}};
+export interface AppProps {
 
-const App = () => {
+}
+
+export interface IItem {
+  id: string;
+  text: string;
+}
+
+const App: React.SFC<AppProps> = () => {
+
+  const [items, setItems] = useState<IItem[]>([{
+    id: uuid(),
+    text: 'Milk'
+  },
+  {
+    id: uuid(),
+    text: 'Egg'
+  },
+  {
+    id: uuid(),
+    text: 'Bread'
+  },
+  {
+    id: uuid(),
+    text: 'Juice'
+  }])
+
+  const deleteItem = (id: string) => {
+    setItems(preItems => preItems.filter(f => f.id !== id))
+  }
+
+  const addItem = (text: string) => {
+
+    if (text){
+      setItems(preItems => [{id: uuid(), text}, ...preItems])
+    } else {
+      Alert.alert('error', 'Please enter an item', [{text: 'Ok'}])
+    }
+  }
+
+  const renderFlexList = ({ item }: {item: IItem}) => (
+    <ListItem item={item} deleteItem={deleteItem} />
+  )
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View style={styles.container}>
+      <Header title="Shopping List" />
+      <AddItem addItem={addItem} />
+      <FlatList
+        data={items}
+        renderItem={renderFlexList}
+      />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    paddingTop: 60
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
+})
 
 export default App;
