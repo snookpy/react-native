@@ -1,8 +1,11 @@
-import React, {useState} from 'react'
-import { View, StyleSheet, FlatList, Text } from 'react-native';
+import React, { useState } from 'react'
+import { View, StyleSheet, FlatList } from 'react-native';
 
 import ITodo from './ITodo'
- 
+import Header from './components/Header'
+import TodoItem from './components/TodoItem';
+import AddTodo from './components/AddTodo';
+
 const App: React.SFC = () => {
 
   const [todos, setTodos] = useState<ITodo[]>([
@@ -11,26 +14,31 @@ const App: React.SFC = () => {
     { text: 'play on the switch', key: '3' }
   ]);
 
+  const pressHandler = (key: string) => {
+    setTodos(prev => prev.filter(f => f.key !== key))
+  }
 
-  const renderItem = ({ item }: {item: ITodo}) => (
-    <Text>
-      {item.text}
-    </Text>
+  const renderItem = ({ item }: { item: ITodo }) => (
+    <TodoItem item={item} deleteItem={pressHandler} />
   )
 
-  return (  
+  const submitHandler = (text: string) => {
+    setTodos(prev => [...prev, {text, key: Math.random().toString() }])
+  }
+
+  return (
     <View style={styles.container}>
-      {/* {header} */}
+      <Header />
 
-      <View  style={styles.content}>
-          {/* {to form} */}
+      <View style={styles.content}>
+        <AddTodo submitHandler={submitHandler} />
 
-          <View style={styles.list}>
-            <FlatList 
-              data={todos}
-              renderItem={renderItem}
-            />
-          </View>
+        <View style={styles.list}>
+          <FlatList
+            data={todos}
+            renderItem={renderItem}
+          />
+        </View>
       </View>
     </View>
 
@@ -39,7 +47,7 @@ const App: React.SFC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     backgroundColor: '#fff'
   },
   content: {
@@ -50,5 +58,5 @@ const styles = StyleSheet.create({
     marginTop: 20
   }
 })
- 
+
 export default App;
