@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import ITodo from './ITodo'
 import Header from './components/Header'
@@ -23,24 +23,36 @@ const App: React.SFC = () => {
   )
 
   const submitHandler = (text: string) => {
-    setTodos(prev => [...prev, {text, key: Math.random().toString() }])
+
+    if (text.length > 3){
+      setTodos(prev => [...prev, {text, key: Math.random().toString() }])
+    } else {
+      Alert.alert("OOPS!", "Please input text more than three characters", [
+        {
+          text: 'Understood'
+        }
+      ])
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <Header />
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss()
+    }}>
+      <View style={styles.container}>
+        <Header />
+        <View style={styles.content}>
+          <AddTodo submitHandler={submitHandler} />
 
-      <View style={styles.content}>
-        <AddTodo submitHandler={submitHandler} />
-
-        <View style={styles.list}>
-          <FlatList
-            data={todos}
-            renderItem={renderItem}
-          />
+          <View style={styles.list}>
+            <FlatList
+              data={todos}
+              renderItem={renderItem}
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
 
   );
 }
